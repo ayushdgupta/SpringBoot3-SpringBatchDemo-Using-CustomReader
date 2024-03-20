@@ -27,5 +27,7 @@ implementation 'org.springframework.boot:spring-boot-starter-batch'
 8. Now we need to create the partitioner.
 9. Now we need to create the job listener which will work according to the job status i.e. if the job status is success then it'll update the status success in the table where we created the entry for the current run or failue in case of failure.
 10. Now we need to create the job where the first step will be 'logEntryStep' second 'dataCountStep' third 'master step' fourth will be 'job listener'.
+11. Now we need to trigger our job that can be done either by hitting an API but sometimes there is a possibility spring batch might also take 1 hr or more than that because of large size of data but an API has a time limit, within that it need to respond to the client so aprt from API triggering we are using **commandLineRunner** where we will override the run method and trigger our job using **JobLauncher**.
 
 ### Custom reader and Partitioner logic
+1. Query
