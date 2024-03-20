@@ -2,10 +2,12 @@ package com.guptaji.springBatchPartitionerDemo.config;
 
 import com.guptaji.springBatchPartitionerDemo.entity.StudentOne;
 import com.guptaji.springBatchPartitionerDemo.entity.StudentTwo;
+import com.guptaji.springBatchPartitionerDemo.listener.StudentJobListener;
 import com.guptaji.springBatchPartitionerDemo.partitioner.StudentPartitioner;
 import com.guptaji.springBatchPartitionerDemo.processor.StudentOneDataProcessor;
 import com.guptaji.springBatchPartitionerDemo.reader.StudentOneDataReader;
 import com.guptaji.springBatchPartitionerDemo.tasklet.DataCountTasklet;
+import com.guptaji.springBatchPartitionerDemo.tasklet.JobLogEntryTasklet;
 import com.guptaji.springBatchPartitionerDemo.writer.StudentTwoDataWriter;
 
 import java.util.List;
@@ -37,6 +39,16 @@ public class BatchConfig {
 
   @Value("${CHUNK_SIZE}")
   public int chunkSize;
+
+  @Bean
+  public Step logEntryTasklet(
+      JobRepository jobRepository,
+      PlatformTransactionManager platformTransactionManager,
+      @Qualifier("jobLogEntryTasklet") JobLogEntryTasklet jobLogEntryTasklet) {
+    return new StepBuilder("JOB_ENTRY_STEP", jobRepository)
+        .tasklet(jobLogEntryTasklet, platformTransactionManager)
+        .build();
+  }
 
   /**
    * @param jobRepository
@@ -77,8 +89,9 @@ public class BatchConfig {
   @Bean
   public TaskExecutor taskExecutor() {
     ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
-    // calculating the no. of cores available to perform processing in the system in which
-    // code is executing
+    // calculating the no. of cores available (Runtime) to perform processing in the system
+    // in which code is executing. 'availableProcessors()' is a native method i.e. implementation
+    // is written in some other library.
     int coreSize = Runtime.getRuntime().availableProcessors();
     LOG.info("No. of processors available for processing {}", coreSize);
     taskExecutor.setCorePoolSize(coreSize);
@@ -128,11 +141,15 @@ public class BatchConfig {
   @Bean
   public Job studentJob(
       JobRepository jobRepository,
+      @Qualifier("logEntryTasklet") Step logEntryTasklet,
       @Qualifier("dataCountStep") Step dataCountStep,
-      @Qualifier("studentMasterStep") Step studentMasterStep) {
+      @Qualifier("studentMasterStep") Step studentMasterStep,
+      @Qualifier("studentJobListener") StudentJobListener studentJobListener) {
     return new JobBuilder("STUDENT_JOB", jobRepository)
-        .start(dataCountStep)
+        .start(logEntryTasklet)
+        .next(dataCountStep)
         .next(studentMasterStep)
+        .listener(studentJobListener)
         .build();
   }
 }

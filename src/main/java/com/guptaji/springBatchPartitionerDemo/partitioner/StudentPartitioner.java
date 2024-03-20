@@ -39,6 +39,10 @@ public class StudentPartitioner implements Partitioner, StepExecutionListener {
       long currentMin = i * partitionSize;
       long currentMax = Math.min(currentMin + partitionSize, count);
       ExecutionContext context = new ExecutionContext();
+      if (currentMin >= count) {
+        // to handle negative limit case
+        break;
+      }
       context.putLong(OFFSET, currentMin);
       context.putLong(LIMIT, currentMax - currentMin);
       context.put(IS_COMPLETED, false);

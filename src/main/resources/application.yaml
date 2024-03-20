@@ -19,5 +19,11 @@ spring:
     job:
       enabled: false
 
-GRID_SIZE: 10
-CHUNK_SIZE: 20
+#logging:
+#  level:
+#    root: info
+#  pattern:
+#    console: "%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - correlationId=%X{correlationId} - %msg%n"
+
+GRID_SIZE: 1000
+CHUNK_SIZE: 2000

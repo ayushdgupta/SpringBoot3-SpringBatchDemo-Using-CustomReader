@@ -36,9 +36,9 @@ public class StudentTwoDataWriter implements ItemWriter<List<StudentTwo>>, StepE
     items.forEach(
         item -> {
           studentTwoRepo.saveAll(item);
-          LOG.info("Writer received {} lists to write", item.size());
+          LOG.debug("Writer received {} lists to write", item.size());
         });
-    LOG.info(
+    LOG.debug(
         "Saved the data into DB for the partition {}",
         this.stepExecution.getExecutionContext().getString(PARTITION_NO));
   }

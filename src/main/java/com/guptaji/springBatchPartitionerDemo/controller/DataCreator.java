@@ -24,7 +24,7 @@ public class DataCreator {
   public ResponseEntity<?> createData(
       @PathVariable("name") String name,
       @PathVariable("clgName") String clgName,
-      @PathVariable("count") int count) {
+      @PathVariable("count") long count) {
     studentOneService.createData(name, clgName, count);
     LOG.info("Created data");
     return ResponseEntity.status(HttpStatus.OK).body("Created the data");

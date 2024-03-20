@@ -37,7 +37,7 @@ public class StudentOneDataProcessor
           studentTwo.setCollegeName(studentOne.getCollegeName());
           studentTwoList.add(studentTwo);
         });
-    LOG.info(
+    LOG.debug(
         "Processed the partition {}",
         this.stepExecution.getExecutionContext().getString(PARTITION_NO));
     return studentTwoList;

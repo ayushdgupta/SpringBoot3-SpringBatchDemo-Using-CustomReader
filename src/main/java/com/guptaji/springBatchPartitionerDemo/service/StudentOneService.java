@@ -18,7 +18,7 @@ public class StudentOneService {
 
   @Autowired private StudentOneRepo studentOneRepo;
 
-  public void createData(String name, String clgName, int count) {
+  public void createData(String name, String clgName, long count) {
     List<StudentOne> randomData = CommonUtil.createRandomData(name, clgName, count);
     studentOneRepo.saveAll(randomData);
     LOG.info("Created the {} rows in db with name {} and clg name {}.", count, name, clgName);
